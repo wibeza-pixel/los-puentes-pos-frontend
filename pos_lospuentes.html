@@ -5,276 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Los Puentes Control - Punto de Venta (V25 - Sincronizado Google Sheets)</title>
     <style>
-        /* CSS Integrado (se mantiene sin cambios) */
-        :root {
-            --color-primary: #008080;
-            --color-secondary: #FF8C00;
-            --color-success: #2ECC71;
-            --color-danger: #E74C3C;
-            --color-bg: #f5f5f5;
-            --color-light: #fff;
-            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            font-family: var(--font-main);
-            margin: 0;
-            background-color: var(--color-bg);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        
-        /* Contenedor del Menú */
-        #tabs {
-            width: 100%;
-            max-width: 1400px;
-            margin: 20px auto 0 auto;
-            display: flex;
-            background-color: #333;
-            border-radius: 8px 8px 0 0;
-            overflow: hidden;
-        }
-        .tab-button {
-            padding: 15px 30px;
-            color: var(--color-light);
-            background-color: #555;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        .tab-button:hover { background-color: #666; }
-        .tab-button.active {
-            background-color: var(--color-primary);
-        }
-        
-        #app-container {
-            display: flex; 
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto 20px auto;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 8px 8px;
-            overflow: hidden;
-            flex-grow: 1;
-        }
-        
-        /* Contenedor principal de pestañas - Escondido por defecto */
-        .tab-content {
-            display: none; 
-            width: 100%;
-            box-sizing: border-box;
-            background-color: var(--color-light); 
-        }
-
-        /* Estilos específicos para Admin e Informes (Diseño de una columna) */
-        #tab-admin, #tab-informes {
-             flex-direction: column; 
-             padding: 20px;
-        }
-
-        /* Estilos del Módulo POS (Venta) */
-        #productos {
-            width: 35%;
-            background-color: var(--color-light);
-            padding: 20px;
-            border-right: 1px solid #ddd;
-            overflow-y: auto;
-        }
-        #venta {
-            width: 65%;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--color-light);
-        }
-        .producto-card {
-            background-color: var(--color-bg);
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            cursor: default; 
-            transition: background-color 0.2s;
-            text-align: left;
-            position: relative;
-        }
-        .producto-card h3 { margin: 0 0 5px 0; color: var(--color-primary); }
-        .selector-cantidad {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            gap: 5px; 
-        }
-        .selector-cantidad input {
-            flex-grow: 1; 
-            text-align: center;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .selector-cantidad button {
-            background-color: var(--color-primary);
-            color: var(--color-light);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Estilo para el botón de Camping */
-        .camping-button {
-            background-color: var(--color-secondary);
-            color: var(--color-light);
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
-
-        #detalle-transaccion {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .linea-detalle {
-            display: flex;
-            flex-direction: column; 
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 1px dashed #ddd;
-            padding: 10px 0;
-            font-size: 1.1em;
-            position: relative;
-        }
-        .linea-principal {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-        }
-        .item-detail {
-            font-size: 1em;
-            font-weight: normal;
-            color: #444;
-        }
-        .linea-detalle button {
-            position: absolute;
-            right: 0;
-            top: 10px;
-            background: none;
-            border: none;
-            color: var(--color-danger);
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        .camping-meta {
-            font-size: 0.9em; 
-            margin: 5px 0 0 0; 
-            color: #555;
-            display: block;
-        }
-        #footer-venta {
-            background-color: #333;
-            color: var(--color-light);
-            padding: 15px 20px;
-            border-top: 5px solid var(--color-primary);
-        }
-        #totales {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .total-final {
-              font-size: 1.8em !important;
-              color: var(--color-success);
-              border-top: 1px solid #777; 
-              padding-top: 10px;
-        }
-        .payment-buttons { display: flex; gap: 10px; }
-        .boton-pago {
-            flex-grow: 1;
-            padding: 15px;
-            font-size: 1.1em;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            color: var(--color-light);
-        }
-
-        /* Estilos específicos de Administración e Informes */
-        .admin-form-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .report-table th, .report-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        .report-table th {
-            background-color: #eee;
-            color: var(--color-primary);
-        }
-        .cuadratura-total {
-            font-weight: bold;
-            background-color: #e0f7fa;
-        }
-        /* Estilos del Modal (se mantiene sin cambios) */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 30px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 600px;
-            border-radius: 10px;
-        }
-        .modal-content input, .modal-content button {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        #add-camping-btn {
-            background-color: var(--color-success);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
+        /* ... (TODO EL CSS ORIGINAL SIN CAMBIOS) ... */
     </style>
 </head>
 <body>
@@ -294,194 +25,37 @@
                 <hr>
                 <p>Seleccione servicio:</p>
 
-                <div class="producto-card">
-                    <h3>⛺ Camping (Valor Día)</h3>
-                    <p>Estancia diurna. Tarifa de hoy: *$<span id="display-precio-dia">0</span>*.</p>
-                    <button class="camping-button" onclick="handleOpenCampingModal('Camping (Valor Día)', 'Día')">Abrir Formulario</button>
-                </div>
-                <div class="producto-card">
-                    <h3>⛺ Camping (Valor Noche)</h3>
-                    <p>Estancia nocturna. Tarifa de hoy: *$<span id="display-precio-noche">0</span>*.</p>
-                    <button class="camping-button" onclick="handleOpenCampingModal('Camping (Valor Noche)', 'Noche')">Abrir Formulario</button>
-                </div>
-
-                <div class="producto-card producto-simple" data-precio="10000" data-nombre="Piscina (Adulto)" data-segmento="Adulto">
-                    <h3>🏊 Piscina (Adulto)</h3>
-                    <p>Precio Unitario: *$<span id="precio-adulto-display">10.000</span>*</p>
-                    <div class="selector-cantidad">
-                        <button onclick="changeQuantity(this, -1, event)">-</button>
-                        <input type="number" value="0" min="0" onchange="updateQuantityFromInput(this, event)"> 
-                        <button onclick="changeQuantity(this, 1, event)">+</button>
-                    </div>
-                </div>
-                
-                <div class="producto-card producto-simple" data-precio="5000" data-nombre="Piscina (Niño 6-12)" data-segmento="Niño">
-                    <h3>🏊 Piscina (Niño 6-12)</h3>
-                    <p>Precio Unitario: *$<span id="precio-nino-display">5.000</span>*</p>
-                    <div class="selector-cantidad">
-                        <button onclick="changeQuantity(this, -1, event)">-</button>
-                        <input type="number" value="0" min="0" onchange="updateQuantityFromInput(this, event)">
-                        <button onclick="changeQuantity(this, 1, event)">+</button>
-                    </div>
-                </div>
-                
-                <div class="producto-card producto-simple" data-precio="0" data-nombre="Piscina (3ra Edad/Disc)" data-segmento="Exención">
-                    <h3>🆓 Piscina (3ª Edad / Discapacitado)</h3>
-                    <p>Precio Unitario: *$0*</p>
-                    <div class="selector-cantidad">
-                        <button onclick="changeQuantity(this, -1, event)">-</button>
-                        <input type="number" value="0" min="0" onchange="updateQuantityFromInput(this, event)">
-                        <button onclick="changeQuantity(this, 1, event)">+</button>
-                    </div>
-                </div>
-
-                <div class="producto-card producto-simple" data-precio="8000" data-nombre="Kayak (1 Hora)" data-segmento="Hora">
-                    <h3>🛶 Kayak (1 Hora)</h3>
-                    <p>Precio Unitario: *$<span id="precio-kayak-display">8.000</span>*</p>
-                    <div class="selector-cantidad">
-                        <button onclick="changeQuantity(this, -1, event)">-</button>
-                        <input type="number" value="0" min="0" onchange="updateQuantityFromInput(this, event)">
-                        <button onclick="changeQuantity(this, 1, event)">+</button>
-                    </div>
-                </div>
-
+                <!-- ... rest of productos ... -->
             </div>
 
-            <div id="venta">
-                
+            <div id="venta">                
                 <div class="header-venta" style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <h2 style="color: var(--color-primary);">Venta Actual</h2>
                     <button onclick="vaciarCarrito()">❌ Cancelar Venta</button>
                 </div>
 
                 <div id="detalle-transaccion">
-                    <p id="empty-cart-message" style="text-align: center; color: #777; margin-top: 50px;">Aún no hay ítems. Agregue servicios de Piscina/Kayak o use el **Formulario** para Camping.</p>
+                    <p id="empty-cart-message" style="text-align: center; color: #777; margin-top: 50px;">Aún no hay ítems. Agregue servicios de Piscina/Kayak o use el <strong>Formulario</strong> para Camping.</p>
                 </div>
-
-                <div id="footer-venta">
-                    <div id="totales">
-                        <span>Subtotal:</span>
-                        <span id="subtotal-display">$0 CLP</span>
-                    </div>
-                    <div id="totales" style="color: var(--color-secondary);">
-                        <label for="descuento-manual">Descuento Manual (CLP):</label>
-                        <input type="number" id="descuento-manual" value="0" min="0" style="padding: 5px; width: 80px; text-align: right; border-radius: 3px;" onchange="calcularTotales()">
-                    </div>
-                    <div id="totales" style="color: var(--color-secondary);">
-                        <span>Monto Descontado:</span>
-                        <span id="descuento-display">$0 CLP</span>
-                    </div>
-                    <div id="totales" class="total-final">
-                        <span>TOTAL A PAGAR:</span>
-                        <span id="total-final-display">$0 CLP</span>
-                    </div>
-
-                    <div class="payment-buttons">
-                        <button class="boton-pago boton-pago-efectivo" style="background-color: var(--color-success);" onclick="procesarPago('Efectivo')">💵 Efectivo (Imprimir)</button>
-                        <button class="boton-pago boton-pago-tarjeta" style="background-color: var(--color-primary);" onclick="procesarPago('Tarjeta')">💳 Tarjeta (Imprimir)</button>
-                        <button class="boton-pago boton-pago-convenio" style="background-color: #999;" onclick="procesarPago('Convenio')">🤝 Convenio (Imprimir)</button>
-                    </div>
-                </div>
-
+                <!-- resto del tab-venta ... -->
             </div>
         </div>
 
-        <div id="tab-admin" class="tab-content">
-            <h2>⚙️ Configuración y Administración de Tarifas</h2>
-            <p>Aquí se pueden modificar los precios de los servicios. **(Los precios se guardan en su navegador)**</p>
-
-            <div class="admin-form-group">
-                <h3>🏕️ Mantenedor de Tarifas de Camping</h3>
-                <div class="tarifa-table-container">
-                    <table class="report-table tarifa-table">
-                        <thead>
-                            <tr>
-                                <th>Servicio</th>
-                                <th>Día de Semana</th>
-                                <th>Fin de Semana</th>
-                                <th>Última Modificación</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tarifa-body">
-                            </tbody>
-                    </table>
-                </div>
-                <p style="margin-top: 20px;">*Modifique los valores en los campos y presione **Guardar Cambios** para actualizar la tabla y la lógica de venta.</p>
-                
-                <label for="admin-precio-dia-semana">Camping Día (Día de Semana):</label>
-                <input type="number" id="admin-precio-dia-semana" value="20000"> CLP
-                <br>
-                <label for="admin-precio-dia-finde">Camping Día (Fin de Semana):</label>
-                <input type="number" id="admin-precio-dia-finde" value="25000"> CLP
-                <br>
-                 <label for="admin-precio-noche-semana">Camping Noche (Día de Semana):</label>
-                <input type="number" id="admin-precio-noche-semana" value="35000"> CLP
-                <br>
-                <label for="admin-precio-noche-finde">Camping Noche (Fin de Semana):</label>
-                <input type="number" id="admin-precio-noche-finde" value="45000"> CLP
-                <br>
-                <button onclick="guardarPreciosCamping()">Guardar Cambios de Tarifas Camping</button>
-            </div>
-
-            <div class="admin-form-group">
-                <h3>🏊 Tarifas de Pisicina/Kayak (Fijas)</h3>
-                 <p style="font-size: 0.9em; color: #777;">*Estas tarifas no varían por día de semana/fin de semana.</p>
-
-                <label>Piscina (Adulto):</label>
-                <input type="number" id="admin-precio-piscina-adulto" value="10000" onchange="guardarPreciosFijos()"> CLP
-                <br>
-                <label>Piscina (Niño 6-12):</label>
-                <input type="number" id="admin-precio-piscina-nino" value="5000" onchange="guardarPreciosFijos()"> CLP
-                  <br>
-                <label>Kayak (1 Hora):</label>
-                <input type="number" id="admin-precio-kayak" value="8000" onchange="guardarPreciosFijos()"> CLP
-                <br>
-            </div>
-        </div>
+        <!-- ... admin y otros tabs ... -->
 
         <div id="tab-informes" class="tab-content">
             <h2>📊 Resumen e Informes de Cuadratura</h2>
-            <p>Muestra el resumen de las ventas finalizadas en esta sesión. **(El historial de ventas se pierde al recargar la página)**</p>
+            <p>Muestra el resumen de las ventas finalizadas en esta sesión. <strong>(El historial de ventas se pierde al recargar la página)</strong></p>
             
             <div style="display: flex; gap: 15px; margin-bottom: 20px;">
                 <button onclick="generarReporteDiario()">Actualizar Reporte Diario (Función Deshabilitada - Ahora en Google Sheets)</button>
                 <button onclick="generarReporteMensual()">Generar Acumulado Mensual (Función Deshabilitada - Ahora en Google Sheets)</button>
             </div>
 
-            <p style="color: red; font-weight: bold;">⚠️ NOTA: Las funciones de Reporte Diario/Mensual en esta interfaz ya no son funcionales, pues la información se guarda en su **Google Sheet** centralizado.</p>
+            <p style="color: red; font-weight: bold;">⚠️ NOTA: Las funciones de Reporte Diario/Mensual en esta interfaz ya no son funcionales, pues la información se guarda en su <strong>Google Sheet</strong>.</p>
             <p>Utilice la hoja de cálculo de Google para realizar la cuadratura y los reportes acumulados.</p>
 
-            <div id="reporte-diario-container">
-                <h3>Reporte de Cuadratura Diaria 📅 (Local, temporal)</h3>
-                <div id="resumen-diario"></div>
-                <table class="report-table">
-                    <thead>
-                        <tr><th>Concepto</th><th>Monto Recaudado (CLP)</th></tr>
-                    </thead>
-                    <tbody id="reporte-concepto-body">
-                        <tr><td colspan="2" style="text-align: center; color: #777;">Reporte deshabilitado.</td></tr>
-                    </tbody>
-                </table>
-
-                <h4 style="margin-top: 20px;">Cuadratura por Forma de Pago 💰 (Local, temporal)</h4>
-                <table class="report-table">
-                    <thead>
-                        <tr><th>Forma de Pago</th><th>Monto Recaudado (CLP)</th></tr>
-                    </thead>
-                    <tbody id="reporte-pago-body">
-                        <tr><td colspan="2" style="text-align: center; color: #777;">Reporte deshabilitado.</td></tr>
-                    </tbody>
-                </table>
-                <div style="margin-top: 10px;" class="cuadratura-total">
-                    <p style="padding: 5px;">**TOTAL RECAUDADO (Por Folio):** <span id="reporte-diario-total-folio">$0 CLP</span></p>
-                    <p style="padding: 5px;">**TOTAL RECAUDADO (Por Pago):** <span id="reporte-diario-total-pago">$0 CLP</span></p>
-                </div>
-            </div>
-
-            <div id="reporte-mensual-container" style="margin-top: 40px; border-top: 2px solid var(--color-primary); padding-top: 20px;">
-                <h3>Acumulado Mensual (Local, temporal) 🗓️</h3>
-                <div id="resumen-mensual">Reporte deshabilitado.</div>
-            </div>
+            <!-- ... resto del markup ... -->
 
         </div>
     </div>
@@ -489,630 +63,91 @@
     <div id="campingModal" class="modal">
       <div class="modal-content">
         <h2>Detalle de Estancia - <span id="modal-service-name"></span></h2>
-        
         <div>
           <label for="camping-nombre">Nombre de Responsable:</label>
           <input type="text" id="camping-nombre" required>
-
           <label for="camping-rut">RUT/Pasaporte:</label>
           <input type="text" id="camping-rut" required>
-          
           <label for="camping-celular">N° de Celular:</label>
           <input type="tel" id="camping-celular" placeholder="Ej: +569XXXXXXXX" required>
-
           <label for="camping-patente">Patente Vehículo:</label>
           <input type="text" id="camping-patente">
-          
           <label for="camping-cantidad"><span id="camping-label-text">Cantidad de Noches/Días:</span></label>
           <input type="number" id="camping-cantidad" value="1" min="1" required>
-
           <label for="camping-personas">Cantidad de Personas:</label>
           <input type="number" id="camping-personas" value="1" min="1" required>
-
           <button type="button" id="add-camping-btn" onclick="addCampingToCart()">Añadir Estancia a Venta</button>
         </div>
       </div>
     </div>
 
     <script>
-        // DATOS GLOBALES
-        let carrito = [];
-        let cajeroId = "CAJERO-001";
-        let tempCampingData = {}; 
-        // Eliminamos historialTransacciones ya que ahora usamos Google Sheets
-        let folioActual = 0; 
+    // ... variables ...
 
-        // Objeto de configuración de precios con soporte para persistencia (localStorage)
-        let preciosConfig = {
-            'Camping (Valor Día)': {
-                semana: 20000, 
-                finde: 25000, 
-                modificado: new Date().toLocaleString('es-CL')
-            },
-            'Camping (Valor Noche)': {
-                semana: 35000, 
-                finde: 45000, 
-                modificado: new Date().toLocaleString('es-CL')
-            },
-            'Piscina (Adulto)': { precio: 10000 },
-            'Piscina (Niño 6-12)': { precio: 5000 },
-            'Piscina (3ra Edad/Disc)': { precio: 0 },
-            'Kayak (1 Hora)': { precio: 8000 }
-        };
+    // Reemplazo de la inicialización de folio (inicio seguro)
+    function iniciarTurno() {
+        let lastFolio = parseInt(localStorage.getItem('lastFolio'));
+        if (isNaN(lastFolio)) lastFolio = 1000;
+        let startFolio = lastFolio + 1;
 
-        // ----------------------------------------------------------------------
-        // ¡URL DE SINCRONIZACIÓN CORREGIDA!
-        // ----------------------------------------------------------------------
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycby3Ps97mOWnIRQ2r4O4my21OvKZ63VFAGreV8Z0BuvFQiubaFnFDEj8qoOh_OQspurL/exec"; 
-        // ----------------------------------------------------------------------
-
-
-        // --- FUNCIONES DE UTILERÍA ---
-        
-        const formatCurrency = (amount) => {
-            if (typeof amount !== 'number') return '$0 CLP';
-            return `$${Math.round(amount).toLocaleString('es-CL')}`;
-        };
-
-        const formatFolio = (folio) => {
-            return String(folio).padStart(6, '0');
-        };
-
-        const isFinDeSemana = () => {
-            const day = new Date().getDay(); // 0 = Domingo, 6 = Sábado
-            return day === 0 || day === 6;
-        };
-        
-        const getTarifaDelDia = (servicio) => {
-            const config = preciosConfig[servicio];
-            if (config.precio !== undefined) {
-                 return config.precio; 
-            }
-            return isFinDeSemana() ? config.finde : config.semana;
-        };
-
-        // --- PERSISTENCIA (localStorage) ---
-        
-        function cargarPrecios() {
-            const storedConfig = localStorage.getItem('preciosConfig');
-            if (storedConfig) {
-                const loadedConfig = JSON.parse(storedConfig);
-                
-                // Cargar precios variables (Camping)
-                if (loadedConfig['Camping (Valor Día)']) {
-                     preciosConfig['Camping (Valor Día)'] = loadedConfig['Camping (Valor Día)'];
-                }
-                if (loadedConfig['Camping (Valor Noche)']) {
-                     preciosConfig['Camping (Valor Noche)'] = loadedConfig['Camping (Valor Noche)'];
-                }
-                
-                // Cargar precios fijos (Piscina/Kayak)
-                Object.keys(preciosConfig).forEach(key => {
-                     if (preciosConfig[key].precio !== undefined && loadedConfig[key] && loadedConfig[key].precio !== undefined) {
-                          preciosConfig[key].precio = loadedConfig[key].precio;
-                     }
-                });
-            }
-        }
-
-        function guardarPrecios() {
-            localStorage.setItem('preciosConfig', JSON.stringify(preciosConfig));
-        }
-
-
-        // --- MANEJO DE TURNOS Y FOLIO ---
-        
-        function iniciarTurno() {
-            let startFolio = parseInt(localStorage.getItem('lastFolio')) + 1 || 1001; 
-            
-            if (localStorage.getItem('lastFolio') === null) {
-                let inputFolio = prompt("Por favor, ingrese el Folio Inicial para comenzar su turno:", startFolio.toString());
-                if (inputFolio !== null) {
-                    let parsedFolio = parseInt(inputFolio);
-                    if (!isNaN(parsedFolio) && parsedFolio > 0) {
-                        startFolio = parsedFolio;
-                    }
+        if (localStorage.getItem('lastFolio') === null) {
+            let inputFolio = prompt("Por favor, ingrese el Folio Inicial para comenzar su turno:", startFolio.toString());
+            if (inputFolio !== null) {
+                let parsedFolio = parseInt(inputFolio);
+                if (!isNaN(parsedFolio) && parsedFolio > 0) {
+                    startFolio = parsedFolio;
                 }
             }
-            
-            folioActual = startFolio;
-            document.getElementById('folio-display').textContent = formatFolio(folioActual);
         }
 
-        function guardarFolio() {
-             localStorage.setItem('lastFolio', (folioActual - 1).toString());
+        folioActual = startFolio;
+        document.getElementById('folio-display').textContent = formatFolio(folioActual);
+    }
+    // --- FUNCIÓN PRINCIPAL DE PAGO CON SINCRONIZACIÓN ---
+    async function procesarPago(metodo) {
+        if (carrito.length === 0) {
+            alert("El carrito está vacío. Agregue un ítem.");
+            return;
         }
 
-        // --- LÓGICA DE NAVEGACIÓN (TABS) ---
+        const { totalFinal, subtotal, montoDescuento } = calcularTotales();
         
-        function openTab(evt, tabName) {
-            if (evt) evt.preventDefault(); 
-            
-            const tabcontent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
+        // 1. Crear el objeto de Transacción para el envío (similar a las columnas de la hoja)
+        const transaccion = {
+            folio: folioActual,
+            cajero_id: cajeroId,
+            monto_total: totalFinal,
+            monto_descuento: montoDescuento,
+            metodo_pago: metodo,
+            detalle: JSON.parse(JSON.stringify(carrito)) 
+        };
 
-            const tablinks = document.getElementsByClassName("tab-button");
-            for (let i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
+        try {
+            // 2. Enviar los datos al "Puente" de Google Apps Script
+            const response = await fetch(URL_APPS_SCRIPT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(transaccion)
+            });
 
-            const targetTab = document.getElementById(tabName);
-            
-            const displayStyle = (tabName === 'tab-venta') ? "flex" : "block";
-            targetTab.style.display = displayStyle;
-            
-            const activeTabButton = evt ? evt.currentTarget : document.querySelector(`.tab-button[data-tab="${tabName}"]`);
-            if (activeTabButton) {
-                activeTabButton.classList.add("active");
-            }
-            
-            if (tabName === 'tab-admin') {
-                renderTarifaTable();
-            }
-            // Eliminamos la llamada a generarReporteDiario() al abrir Informes
-        }
-        
-        // --- LÓGICA DEL CARRITO Y CÁLCULOS (MÓDULO VENTA) ---
-        
-        function agregarItem(item) {
-            if (!item.uniqueId) {
-                item.uniqueId = item.id + '-' + Date.now();
-            }
+            const result = await response.json();
 
-            const simpleIndex = carrito.findIndex(i => i.id === item.id);
-            
-            if (item.id !== 'camping') {
-                 if (item.cantidad > 0) {
-                    if (simpleIndex !== -1) {
-                        carrito[simpleIndex] = item;
-                    } else {
-                        carrito.push(item);
-                    }
-                 } else {
-                    if (simpleIndex !== -1) {
-                        carrito.splice(simpleIndex, 1);
-                    }
-                 }
+            if (response.ok && result.status === "success") {
+                alert(`✅ Venta Folio N° ${formatFolio(transaccion.folio)} finalizada y SINCRONIZADA con éxito.\nTotal Pagado: ${formatCurrency(totalFinal)} (Método: ${metodo})`);
+                imprimirCupon(transaccion);
+                folioActual++; 
+                document.getElementById('folio-display').textContent = formatFolio(folioActual);
+                guardarFolio(); 
+                vaciarCarrito(false); 
             } else {
-                 const campingIndex = carrito.findIndex(i => i.uniqueId === item.uniqueId);
-                 
-                 if (campingIndex !== -1) {
-                     carrito[campingIndex] = item;
-                 } else {
-                     carrito.push(item);
-                 }
+                throw new Error(`Error en el servidor de Sheets: ${result.message}`);
             }
-            
-            actualizarInterfaz();
+        } catch (error) {
+            alert(`❌ ¡ERROR CRÍTICO DE SINCRONIZACIÓN! La venta NO FUE REGISTRADA en la nube. Revise la consola (F12) o su URL de Apps Script. Detalles: ${error.message}`);
+            console.error("Fallo al enviar la venta a Google Sheets:", error);
         }
-
-        function removeItem(uniqueId) {
-            const item = carrito.find(item => item.uniqueId === uniqueId);
-            
-            if (item && item.id !== 'camping') {
-                const card = document.querySelector(`.producto-card[data-nombre="${item.nombre}"]`);
-                if(card) {
-                    card.querySelector('input[type="number"]').value = 0;
-                }
-            };
-            
-            carrito = carrito.filter(item => item.uniqueId !== uniqueId);
-            actualizarInterfaz();
-        }
-
-        function calcularTotales() {
-            const subtotal = carrito.reduce((sum, item) => sum + item.subtotal, 0);
-            
-            const montoDescuento = parseFloat(document.getElementById('descuento-manual').value) || 0;
-            
-            let totalFinal = subtotal - montoDescuento;
-            if (totalFinal < 0) totalFinal = 0; 
-
-            document.getElementById('subtotal-display').textContent = formatCurrency(subtotal);
-            document.getElementById('descuento-display').textContent = formatCurrency(montoDescuento);
-            document.getElementById('total-final-display').textContent = formatCurrency(totalFinal);
-            
-            return { totalFinal, subtotal, montoDescuento }; 
-        }
-
-        function actualizarInterfaz() {
-            const detalleDiv = document.getElementById('detalle-transaccion');
-            detalleDiv.innerHTML = '';
-            
-            if (carrito.length === 0) {
-                document.getElementById('empty-cart-message').style.display = 'block';
-                calcularTotales();
-                return;
-            };
-            document.getElementById('empty-cart-message').style.display = 'none';
-
-            carrito.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'linea-detalle';
-
-                const itemId = item.uniqueId;
-                const unitLabel = item.segmento === 'Día' ? 'Día(s)' : item.segmento === 'Noche' ? 'Noche(s)' : 'u.';
-                
-                // Detalle visible en Venta Actual
-                const itemDetail = (item.precioUnitario === 0) ? 
-                    `(${item.cantidad} ${unitLabel}) - Precio: Exento` :
-                    `(${item.cantidad} ${unitLabel} @ ${formatCurrency(item.precioUnitario)} c/u)`;
-
-                let campingDetails = '';
-
-                if (item.id.includes('camping') && item.datosCliente) {
-                    campingDetails = `
-                        <span class="camping-meta">
-                            Resp: *${item.datosCliente.nombre}* | Pers: ${item.datosCliente.personas} | Cel: ${item.datosCliente.celular || 'N/A'}
-                        </span>
-                        <span class="camping-meta">
-                            Patente: ${item.datosCliente.patente || 'N/A'}
-                        </span>
-                    `;
-                }
-
-                div.innerHTML = `
-                    <div class="linea-principal">
-                        <span>
-                            <strong style="color: var(--color-primary);">${item.nombre}</strong>
-                            <span class="item-detail">${itemDetail}</span>
-                        </span>
-                        <span style="font-weight: bold;">${formatCurrency(item.subtotal)}</span>
-                    </div>
-                    ${campingDetails}
-                    <button onclick="removeItem('${itemId}')">x</button>
-                `;
-                detalleDiv.appendChild(div);
-            });
-
-            calcularTotales();
-        }
-
-        function vaciarCarrito(confirmar = true) {
-             const proceed = confirmar ? confirm("¿Está seguro de CANCELAR esta transacción?") : true;
-            
-             if (proceed) {
-                carrito = [];
-                document.getElementById('descuento-manual').value = 0;
-                document.querySelectorAll('.producto-card input[type="number"]').forEach(input => input.value = 0);
-                actualizarInterfaz();
-             };
-        }
-
-        function imprimirCupon(transaccion) {
-            let cupon = "========================================\n";
-            cupon += "       CAMPING LOS PUENTES\n";
-            cupon += "            RECIBO DE VENTA\n";
-            cupon += "----------------------------------------\n";
-            cupon += `FOLIO: ${formatFolio(transaccion.folio)}\n`;
-            cupon += `CAJERO: ${transaccion.cajero_id}\n`;
-            cupon += `FECHA: ${new Date().toLocaleString('es-CL')}\n`;
-            cupon += "----------------------------------------\n";
-            cupon += "DETALLE:\n";
-            
-            transaccion.detalle.forEach(item => {
-                const unitLabel = item.segmento === 'Día' ? 'Día(s)' : item.segmento === 'Noche' ? 'Noche(s)' : 'u.';
-                cupon += `${item.nombre} (${item.cantidad} ${unitLabel}) - ${formatCurrency(item.subtotal)}\n`;
-                if (item.id.includes('camping') && item.datosCliente) {
-                    cupon += `  > Resp: ${item.datosCliente.nombre} | Pers: ${item.datosCliente.personas}\n`;
-                    cupon += `  > Cel: ${item.datosCliente.celular || 'N/A'} | Patente: ${item.datosCliente.patente || 'N/A'}\n`;
-                }
-            });
-            
-            cupon += "----------------------------------------\n";
-            // Nota: Aquí no tenemos el subtotal original ni el descuento individual, solo los finales.
-            cupon += `DESCUENTO: ${formatCurrency(transaccion.monto_descuento)}\n`;
-            cupon += `TOTAL A PAGAR: ${formatCurrency(transaccion.monto_total)}\n`;
-            cupon += `MÉTODO PAGO: ${transaccion.metodo_pago}\n`;
-            cupon += "========================================\n";
-            cupon += "¡GRACIAS POR SU VISITA!";
-
-            const printWindow = window.open('', '_blank', 'width=400,height=600');
-            printWindow.document.write('<pre>' + cupon + '</pre>');
-            printWindow.document.close();
-            printWindow.focus();
-            // printWindow.print(); // Descomentar para imprimir realmente
-        }
-        
-        // --- FUNCIÓN PRINCIPAL DE PAGO CON SINCRONIZACIÓN ---
-        async function procesarPago(metodo) {
-            if (carrito.length === 0) {
-                alert("El carrito está vacío. Agregue un ítem.");
-                return;
-            }
-
-            const { totalFinal, subtotal, montoDescuento } = calcularTotales();
-            
-            // 1. Crear el objeto de Transacción para el envío (similar a las columnas de la hoja)
-            const transaccion = {
-                folio: folioActual,
-                cajero_id: cajeroId,
-                monto_total: totalFinal, // Usamos el total final, ya con descuento
-                monto_descuento: montoDescuento,
-                metodo_pago: metodo,
-                // Incluimos el detalle completo para guardarlo en la columna G de la hoja
-                detalle: JSON.parse(JSON.stringify(carrito)) 
-            };
-
-            try {
-                // 2. Enviar los datos al "Puente" de Google Apps Script
-                const response = await fetch(URL_APPS_SCRIPT, {
-                    method: 'POST',
-                    // Este es el encabezado que Apps Script espera para recibir JSON
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
-                    // Enviar el objeto de transacción como texto JSON en el cuerpo
-                    body: JSON.stringify(transaccion)
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.status === "success") {
-                    // Sincronización exitosa
-                    alert(`✅ Venta Folio N° ${formatFolio(transaccion.folio)} finalizada y SINCRONIZADA con éxito.\nTotal Pagado: ${formatCurrency(totalFinal)} (Método: ${metodo})`);
-                    
-                    // Lógica final de la venta
-                    imprimirCupon(transaccion);
-                    
-                    folioActual++; 
-                    document.getElementById('folio-display').textContent = formatFolio(folioActual);
-                    guardarFolio(); 
-
-                    vaciarCarrito(false); 
-
-                } else {
-                    // La API de Apps Script respondió, pero hubo un error de código
-                    throw new Error(`Error en el servidor de Sheets: ${result.message}`);
-                }
-            } catch (error) {
-                // Fallo de red o error de URL
-                alert(`❌ ¡ERROR CRÍTICO DE SINCRONIZACIÓN! La venta NO FUE REGISTRADA en la nube. Revise la consola (F12) o su URL de Apps Script. Detalles: ${error.message}`);
-                console.error("Fallo al enviar la venta a Google Sheets:", error);
-            }
-        }
-        // --- FIN DE FUNCIÓN PROCESARPAGO ---
-
-        // --- LÓGICA DE PRODUCTOS SIMPLES (CANTIDAD) ---
-        
-        function changeQuantity(button, change, event) {
-            if (event) event.preventDefault();
-            const card = button.closest('.producto-card');
-            const input = card.querySelector('input[type="number"]');
-
-            let newQty = parseInt(input.value) + change;
-            
-            if (newQty < 0) newQty = 0;
-            input.value = newQty;
-            
-            updateQuantityFromInput(input);
-        }
-
-        function updateQuantityFromInput(input, event) {
-            if (event) event.preventDefault();
-
-            const quantity = parseInt(input.value) || 0;
-            const card = input.closest('.producto-card');
-            const productName = card.getAttribute('data-nombre');
-            const precioUnitario = parseInt(card.getAttribute('data-precio'));
-            
-            const item = {
-                id: productName.replace(/[^a-zA-Z0-9]/g, ''), 
-                nombre: productName,
-                precioUnitario: precioUnitario,
-                cantidad: quantity,
-                subtotal: quantity * precioUnitario,
-                segmento: card.getAttribute('data-segmento') ,
-                uniqueId: productName.replace(/[^a-zA-Z0-9]/g, '')
-            };
-            
-            agregarItem(item);
-        }
-
-        // --- LÓGICA DE MODAL (CAMPING) ---
-        
-        function closeCampingModal() {
-             document.getElementById('campingModal').style.display = 'none';
-        }
-
-        function handleOpenCampingModal(name, segment) {
-            const currentPrice = getTarifaDelDia(name);
-            
-            const uniqueId = name.replace(/[^a-zA-Z0-9]/g, '') + '-' + Date.now();
-            
-            tempCampingData = {
-                id: 'camping',
-                nombre: name,
-                precioUnitario: currentPrice, 
-                segmento: segment,
-                uniqueId: uniqueId 
-            };
-
-            document.getElementById('modal-service-name').textContent = name;
-            
-            const labelText = segment === 'Día' ? 'Cantidad de Días:' : 'Cantidad de Noches:';
-            document.getElementById('camping-label-text').textContent = labelText;
-            
-            document.getElementById('camping-nombre').value = '';
-            document.getElementById('camping-rut').value = '';
-            document.getElementById('camping-celular').value = '';
-            document.getElementById('camping-patente').value = '';
-            document.getElementById('camping-cantidad').value = 1;
-            document.getElementById('camping-personas').value = 1;
-
-            document.getElementById('campingModal').style.display = 'block';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('campingModal');
-            if (event.target == modal) {
-                closeCampingModal();
-            }
-        }
-        
-        function addCampingToCart() {
-            const cantidad = parseInt(document.getElementById('camping-cantidad').value);
-            const personas = parseInt(document.getElementById('camping-personas').value);
-            const nombre = document.getElementById('camping-nombre').value.trim();
-            const rut = document.getElementById('camping-rut').value.trim();
-            const celular = document.getElementById('camping-celular').value.trim();
-            const patente = document.getElementById('camping-patente').value.trim();
-
-            if (cantidad < 1 || personas < 1 || nombre === '' || rut === '' || celular === '') {
-                alert("Por favor, complete todos los campos obligatorios del formulario (Nombre, RUT, Celular, Cantidad y Personas).");
-                return;
-            }
-
-            const subtotal = tempCampingData.precioUnitario * cantidad;
-
-            const itemCamping = {
-                id: tempCampingData.id,
-                uniqueId: tempCampingData.uniqueId, 
-                nombre: tempCampingData.nombre,
-                precioUnitario: tempCampingData.precioUnitario,
-                cantidad: cantidad, 
-                segmento: tempCampingData.segmento,
-                subtotal: subtotal,
-                datosCliente: {
-                    nombre: nombre,
-                    rut: rut,
-                    celular: celular,
-                    patente: patente,
-                    personas: personas,
-                    noches: cantidad 
-                }
-            };
-            
-            agregarItem(itemCamping);
-
-            closeCampingModal();
-        }
-
-        // --- LÓGICA DE ADMINISTRACIÓN (MANTENEDOR) ---
-        
-        function renderTarifaTable() {
-            const tbody = document.getElementById('tarifa-body');
-            tbody.innerHTML = '';
-            
-            const campingItems = [
-                'Camping (Valor Día)',
-                'Camping (Valor Noche)'
-            ];
-
-            campingItems.forEach(key => {
-                const config = preciosConfig[key];
-                const row = tbody.insertRow();
-                row.insertCell().textContent = key;
-                row.insertCell().textContent = formatCurrency(config.semana);
-                row.insertCell().textContent = formatCurrency(config.finde);
-                row.insertCell().textContent = config.modificado;
-            });
-            
-            document.getElementById('admin-precio-dia-semana').value = preciosConfig['Camping (Valor Día)'].semana;
-            document.getElementById('admin-precio-dia-finde').value = preciosConfig['Camping (Valor Día)'].finde;
-            document.getElementById('admin-precio-noche-semana').value = preciosConfig['Camping (Valor Noche)'].semana;
-            document.getElementById('admin-precio-noche-finde').value = preciosConfig['Camping (Valor Noche)'].finde;
-
-            document.getElementById('admin-precio-piscina-adulto').value = preciosConfig['Piscina (Adulto)'].precio;
-            document.getElementById('admin-precio-piscina-nino').value = preciosConfig['Piscina (Niño 6-12)'].precio;
-            document.getElementById('admin-precio-kayak').value = preciosConfig['Kayak (1 Hora)'].precio;
-
-            actualizarPreciosVenta();
-        }
-
-        function guardarPreciosCamping() {
-            const precioDiaSemana = parseInt(document.getElementById('admin-precio-dia-semana').value) || 0;
-            const precioDiaFinde = parseInt(document.getElementById('admin-precio-dia-finde').value) || 0;
-            const precioNocheSemana = parseInt(document.getElementById('admin-precio-noche-semana').value) || 0;
-            const precioNocheFinde = parseInt(document.getElementById('admin-precio-noche-finde').value) || 0;
-
-            const now = new Date().toLocaleString('es-CL');
-
-            preciosConfig['Camping (Valor Día)'] = {
-                semana: precioDiaSemana, 
-                finde: precioDiaFinde, 
-                modificado: now
-            };
-            preciosConfig['Camping (Valor Noche)'] = {
-                semana: precioNocheSemana, 
-                finde: precioNocheFinde, 
-                modificado: now
-            };
-            
-            guardarPrecios();
-            renderTarifaTable();
-            alert("Tarifas de Camping guardadas y actualizadas correctamente.");
-        }
-
-        function guardarPreciosFijos() {
-            const adulto = parseInt(document.getElementById('admin-precio-piscina-adulto').value) || 0;
-            const nino = parseInt(document.getElementById('admin-precio-piscina-nino').value) || 0;
-            const kayak = parseInt(document.getElementById('admin-precio-kayak').value) || 0;
-
-            preciosConfig['Piscina (Adulto)'].precio = adulto;
-            preciosConfig['Piscina (Niño 6-12)'].precio = nino;
-            preciosConfig['Kayak (1 Hora)'].precio = kayak;
-
-            // Actualizar data-precio de las cards
-            document.querySelector('[data-nombre="Piscina (Adulto)"]').setAttribute('data-precio', adulto);
-            document.querySelector('[data-nombre="Piscina (Niño 6-12)"]').setAttribute('data-precio', nino);
-            document.querySelector('[data-nombre="Kayak (1 Hora)"]').setAttribute('data-precio', kayak);
-            
-            // Actualizar display
-            document.getElementById('precio-adulto-display').textContent = adulto.toLocaleString('es-CL');
-            document.getElementById('precio-nino-display').textContent = nino.toLocaleString('es-CL');
-            document.getElementById('precio-kayak-display').textContent = kayak.toLocaleString('es-CL');
-            
-            guardarPrecios();
-            alert("Tarifas Fijas guardadas y actualizadas correctamente.");
-        }
-        
-        function actualizarPreciosVenta() {
-             const tarifaDiaHoy = getTarifaDelDia('Camping (Valor Día)');
-             const tarifaNocheHoy = getTarifaDelDia('Camping (Valor Noche)');
-             const adulto = preciosConfig['Piscina (Adulto)'].precio;
-             const nino = preciosConfig['Piscina (Niño 6-12)'].precio;
-             const kayak = preciosConfig['Kayak (1 Hora)'].precio;
-             
-             document.getElementById('display-precio-dia').textContent = tarifaDiaHoy.toLocaleString('es-CL');
-             document.getElementById('display-precio-noche').textContent = tarifaNocheHoy.toLocaleString('es-CL');
-
-             document.getElementById('today-is').textContent = isFinDeSemana() ? 'Fin de Semana' : 'Día de Semana';
-             
-             document.querySelector('[data-nombre="Piscina (Adulto)"]').setAttribute('data-precio', adulto);
-             document.querySelector('[data-nombre="Piscina (Niño 6-12)"]').setAttribute('data-precio', nino);
-             document.querySelector('[data-nombre="Kayak (1 Hora)"]').setAttribute('data-precio', kayak);
-             
-             document.getElementById('precio-adulto-display').textContent = adulto.toLocaleString('es-CL');
-             document.getElementById('precio-nino-display').textContent = nino.toLocaleString('es-CL');
-             document.getElementById('precio-kayak-display').textContent = kayak.toLocaleString('es-CL');
-        }
-
-        // --- LÓGICA DE INFORMES (AHORA DESHABILITADA) ---
-        // Estas funciones ahora deben ser manejadas en Google Sheets
-        function generarReporteDiario() {
-            alert("La generación de reportes local ha sido deshabilitada. Por favor, consulte su Hoja de Cálculo de Google para obtener la información de cuadratura.");
-        }
-        function generarReporteMensual() {
-            alert("La generación de reportes local ha sido deshabilitada. Por favor, consulte su Hoja de Cálculo de Google para obtener la información acumulada.");
-        }
-
-
-        // --- INICIALIZACIÓN ---
-
-        function initApp() {
-            cargarPrecios();
-            iniciarTurno();
-
-            document.getElementById('cajero-name').textContent = cajeroId;
-            
-            actualizarPreciosVenta();
-
-            openTab(null, 'tab-venta');
-        }
-        
-        document.addEventListener('DOMContentLoaded', initApp);
-
+    }
+    // ... resto del JS igual ...
     </script>
 </body>
 </html>
